@@ -2,18 +2,28 @@ import cart.CartItem;
 import cart.CheckoutInfo;
 import itens.Item;
 import cart.ShoppingCart;
+import observer.Observer;
 import observer.Subject;
 import org.example.payment.PaymentProvider;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ECommerce {
     private final PaymentProvider paymentProvider;
     private final ShoppingCart shoppingCart;
     private final Subject orderSubject;
+    private List<Observer> logisticsAgents;
 
     public ECommerce(PaymentProvider paymentProvider, ShoppingCart shoppingCart, Subject orderSubject) {
         this.paymentProvider = paymentProvider;
         this.shoppingCart = shoppingCart;
         this.orderSubject = orderSubject;
+        this.logisticsAgents = new ArrayList<>();
+    }
+
+    public void addLogisticsAgent(Observer logisticsAgent) {
+        logisticsAgents.add(logisticsAgent);
     }
 
     public void addToCart(Item item, int quantity) {
@@ -24,6 +34,12 @@ public class ECommerce {
 
     public void checkout() {
         double totalAmount = shoppingCart.calculateTotal();
+
+        // Adiciona os agentes logísticos
+        for (Observer logisticsAgent : logisticsAgents) {
+            orderSubject.attach(logisticsAgent);
+        }
+
         CheckoutInfo checkoutInfo = new CheckoutInfo(shoppingCart.getCartItems(), totalAmount);
 
         // Modificação para incluir informações do carrinho no setDeliveryInfo
