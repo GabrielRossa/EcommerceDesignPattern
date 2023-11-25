@@ -1,7 +1,6 @@
 package cart;
 
 import itens.Item;
-import itens.Product;
 
 public class CartItem {
     private Item item;
@@ -22,5 +21,13 @@ public class CartItem {
 
     public double getTotalPrice() {
         return quantity * item.getPrice();
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "item=" + item.getName() +
+                ", quantity=" + quantity +
+                '}';
     }
 }

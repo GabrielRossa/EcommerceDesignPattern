@@ -1,16 +1,19 @@
 import cart.CartItem;
+import cart.CheckoutInfo;
 import itens.Item;
-import itens.Product;
 import cart.ShoppingCart;
+import observer.Subject;
 import org.example.payment.PaymentProvider;
 
 public class ECommerce {
     private final PaymentProvider paymentProvider;
     private final ShoppingCart shoppingCart;
+    private final Subject orderSubject;
 
-    public ECommerce(PaymentProvider paymentProvider, ShoppingCart shoppingCart) {
+    public ECommerce(PaymentProvider paymentProvider, ShoppingCart shoppingCart, Subject orderSubject) {
         this.paymentProvider = paymentProvider;
         this.shoppingCart = shoppingCart;
+        this.orderSubject = orderSubject;
     }
 
     public void addToCart(Item item, int quantity) {
@@ -21,9 +24,15 @@ public class ECommerce {
 
     public void checkout() {
         double totalAmount = shoppingCart.calculateTotal();
-        System.out.println("Total amount in the shopping cart: " + totalAmount);
+        CheckoutInfo checkoutInfo = new CheckoutInfo(shoppingCart.getCartItems(), totalAmount);
+
+        // Modificação para incluir informações do carrinho no setDeliveryInfo
+        orderSubject.setDeliveryInfo(checkoutInfo);
+
+        // Lógica adicional de checkout, como processar pagamento, enviar confirmação, etc.
         paymentProvider.processPayment(totalAmount);
-        // Lógica adicional de checkout, como limpar o carrinho, enviar confirmação, etc.
+
+        // Limpar o carrinho após o checkout
         shoppingCart.getCartItems().clear();
     }
 }
