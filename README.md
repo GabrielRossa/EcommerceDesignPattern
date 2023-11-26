@@ -1,4 +1,5 @@
 # EcommerceDesignPattern
+## Gabriel Antônio Rossa
 
 ## Os Design Patterns usados foram:
 
